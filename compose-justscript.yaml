@@ -1,9 +1,9 @@
 version: '3'
 services:
   ourapython:
-    extends:
-      file: compose-full_stack.yaml
-      service: ourapython
+    build: .
+    container_name: ourapython
+    command: python /etc/oura/oura_post_to_influxdb.py
     secrets:
       - OuraApiToken
       - InfluxDBToken

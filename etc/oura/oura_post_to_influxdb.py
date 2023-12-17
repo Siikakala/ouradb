@@ -8,14 +8,15 @@ import json
 import re
 
 #Influxdb2 info
-INFLUXDB_TOKEN = open('/etc/oura/INFLUXDBTOKEN.txt','r').read(88)
-org = "my-org"
-bucket ="my-bucket"
-url = "http://2.2.2.3:8086"
-client_ouradb = influxdb_client.InfluxDBClient(url=url, token=INFLUXDB_TOKEN, org=org)
+INFLUXDB_TOKEN = open('/run/secrets/InfluxDBToken','r').read(88)
+INFLUXDB_DB = os.environ["INFLUXDB_DB"]
+INFLUXDB_BUCKET = os.environ["BUCKET"]
+INFLUXDB_URL = os.environ["INFLUXDB_URL"]
+INFLUXDB_ORG = os.environ["INFLUXDB_ORG"]
+client_ouradb = influxdb_client.InfluxDBClient(url=INFLUXDB_URL, token=INFLUXDB_TOKEN, org=INFLUXDB_ORG)
 write_api = client_ouradb.write_api(write_options=SYNCHRONOUS)
 
-pat = open('/etc/oura/PAT.txt','r').read(32)
+OURA_PAT = open('/run/secrets/OuraApiToken','r').read(32)
 
 
 def fetch_data(start, end, datatype, pat_data):
@@ -32,7 +33,7 @@ def fetch_data(start, end, datatype, pat_data):
 
     #If we're looking for sleep...cycles through the items in response dictionary, finds the one that contains long_sleep, sets the active resp to that section. Otherwise naps make amess of the data.
     indexstart = 0
-    indexceiling = len(response["data"]) - 1 
+    indexceiling = len(response["data"]) - 1
     if datatype == 'sleep':
         while indexstart <= indexceiling:
             resp2 = response["data"][indexstart]
@@ -40,13 +41,13 @@ def fetch_data(start, end, datatype, pat_data):
                 if v == "long_sleep":
                     resp = resp2
             indexstart+= 1
-    
+
     #Adds the contributors section at level 0 of our readiness json. Includes stats like hrv and sleep balance
     if datatype == 'daily_readiness':
         resp2 = response["data"][0]["contributors"]
         resp.pop('contributors', None)
         resp.update(resp2)
-        
+
     # All data should be consistent in influxdb, so turn ints to floats
     resp = {k:float(v) if type(v) == int else v for k,v in resp.items()}
     return resp
@@ -54,11 +55,11 @@ def fetch_data(start, end, datatype, pat_data):
 def get_data_one_day(date,pat):
     end_date=datetime.strptime(date,'%Y-%m-%d')
     start_date=end_date - timedelta(days=1)
-    
+
 
     sleep_data = fetch_data(start_date,end_date,'sleep',pat)
     readiness_data = fetch_data(start_date,end_date,'daily_readiness',pat)
- 
+
     if sleep_data == None:
         print("No data, exiting")
         exit()
@@ -73,8 +74,8 @@ def get_data_one_day(date,pat):
     sleep_data.pop('type', None)
     sleep_data.pop('readiness', None)
     readiness_data.pop('contributors', None)
-    
- 
+
+
 
 
 
@@ -86,7 +87,7 @@ def get_data_one_day(date,pat):
              "time": data['bedtime_end'],
              "fields": data
     },]
-    
+
     return post_data
 
 
@@ -100,7 +101,7 @@ if (args.end and not args.start) or (args.start and not args.end):
     exit()
 
 date_pattern = re.compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
-    
+
 if args.start:
     if not date_pattern.match(args.start):
         print("Start date format invalid. Use format: YYYY-MM-DD")
@@ -125,8 +126,8 @@ else:
 # Go through all days between start and end dates
 
 while start_date <= end_date:
-    data = get_data_one_day(end_date.strftime('%Y-%m-%d'),pat)
-    write_api.write(bucket=bucket, org=org, record=data)
+    data = get_data_one_day(end_date.strftime('%Y-%m-%d'),OURA_PAT)
+    write_api.write(bucket=INFLUXDB_BUCKET, org=INFLUXDB_ORG, record=data)
     print(end_date)
     #print(json.dumps(data, indent=4))
     end_date = end_date - timedelta(days=1)

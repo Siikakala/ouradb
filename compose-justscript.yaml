@@ -1,0 +1,21 @@
+version: '3'
+services:
+  ourapython:
+    extends:
+      file: compose-full_stack.yaml
+      service: ourapython
+    secrets:
+      - OuraApiToken
+      - InfluxDBToken
+    environment:
+      - INFLUXDB_DB==${INFLUXDB_DB:-OuraDB}
+      - BUCKET=${BUCKET:-ouradb}
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_ORG=${INFLUXDB_ORG:-my-org}
+secrets:
+  OuraApiToken:
+    external: true
+    name: "${OURA_PAT}"
+  InfluxDBToken:
+    external: true
+    name: "${INFLUXDB_TOKEN}"

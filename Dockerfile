@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /root
 
 # Configure Oura API script
-RUN pip3 install influxdb-client requests --break-system-packages --no-cache-dir
+RUN pip3 install influxdb-client requests --break-system-packages
 COPY etc/oura/* /etc/oura/
 RUN chmod +x /etc/oura/oura_post_to_influxdb.py
 RUN chmod +x /etc/oura/oura_query.py

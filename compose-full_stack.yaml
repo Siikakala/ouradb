@@ -68,7 +68,6 @@ networks:
 
 secrets:
   OuraApiToken:
-    external: true
-    name: "${OURA_PAT}"
+    file: "${OURA_PAT}"
   InfluxDBToken:
     environment: "DOCKER_INFLUXDB_INIT_ADMIN_TOKEN"

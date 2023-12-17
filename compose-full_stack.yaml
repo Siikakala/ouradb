@@ -3,7 +3,7 @@ services:
   ourapython:
     build: .
     container_name: ourapython
-    command: python /etc/oura/oura_post_to_influxdb.py
+    command: python3 /etc/oura/oura_post_to_influxdb.py
     secrets:
       - OuraApiToken
       - InfluxDBToken

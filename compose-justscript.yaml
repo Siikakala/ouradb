@@ -8,8 +8,7 @@ services:
       - OuraApiToken
       - InfluxDBToken
     environment:
-      - INFLUXDB_DB==${INFLUXDB_DB:-OuraDB}
-      - BUCKET=${BUCKET:-ouradb}
+      - BUCKET=${BUCKET:-OuraDB}
       - INFLUXDB_URL=http://influxdb:8086
       - INFLUXDB_ORG=${INFLUXDB_ORG:-my-org}
 secrets:

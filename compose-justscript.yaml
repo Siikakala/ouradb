@@ -2,13 +2,14 @@ version: '3'
 services:
   ourapython:
     build: .
+    image: ourapython:latest
     container_name: ourapython
     secrets:
       - OuraApiToken
       - InfluxDBToken
     environment:
       - BUCKET=${BUCKET:-OuraDB}
-      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_URL=http://localhost:8086
       - INFLUXDB_ORG=${INFLUXDB_ORG:-my-org}
 secrets:
   OuraApiToken:

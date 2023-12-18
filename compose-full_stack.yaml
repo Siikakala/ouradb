@@ -2,6 +2,7 @@ version: '3'
 services:
   ourapython:
     build: .
+    image: ourapython:latest
     container_name: ourapython
     secrets:
       - OuraApiToken
@@ -60,7 +61,6 @@ services:
 volumes:
   OuraDB-influxdb: {}
   OuraDB-grafana: {}
-  OuraDB-chronograf: {}
 networks:
   ouradb:
     driver: bridge

@@ -10,4 +10,6 @@ COPY scripts/ .
 # Configure cron to query for new data
 WORKDIR /cron
 ADD cron/oura_post .
-CMD [ "crontab", "/cron/oura_post" ]
+RUN crontab /cron/oura_post
+
+CMD ["cron", "-f"]

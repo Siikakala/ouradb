@@ -1,1 +1,1 @@
-0 * * * * python /oura/oura_post_to_influxdb.py
+0 */4 * * * /usr/local/bin/python /oura/oura_post_to_influxdb.py

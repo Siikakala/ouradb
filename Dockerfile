@@ -8,5 +8,6 @@ RUN pip install influxdb-client requests
 COPY scripts/ .
 
 # Configure cron to query for new data
-WORKDIR /etc/cron.hourly
-COPY etc/cron.hourly/oura_post /etc/cron.hourly/
+WORKDIR /cron
+ADD cron/oura_post .
+CMD [ "crontab", "/cron/oura_post" ]

@@ -1,2 +1,1 @@
-#!/bin/bash
-/bin/python3 /oura/oura_post_to_influxdb.py
+0 * * * * /bin/python3 /oura/oura_post_to_influxdb.py

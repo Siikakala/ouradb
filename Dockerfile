@@ -8,6 +8,7 @@ RUN pip install influxdb-client requests
 COPY scripts/ .
 
 # Configure cron to query for new data
+RUN apt-get update && apt-get install -y cron
 WORKDIR /cron
 ADD cron/oura_post .
 RUN crontab /cron/oura_post
